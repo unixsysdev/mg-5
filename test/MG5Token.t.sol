@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./Base.t.sol";
-import {Unauthorized} from "../src/libraries/Errors.sol";
+import { BaseTest } from "./Base.t.sol";
+import { Unauthorized } from "../src/libraries/Errors.sol";
 
 contract MG5TokenTest is BaseTest {
     function testDeploysTokens() public view {

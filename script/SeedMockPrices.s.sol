@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Script} from "forge-std/Script.sol";
-import {BasketOracle} from "../src/BasketOracle.sol";
+import { Script } from "forge-std/Script.sol";
+import { BasketOracle } from "../src/BasketOracle.sol";
 
 contract SeedMockPrices is Script {
     function run(address oracleAddress) external {

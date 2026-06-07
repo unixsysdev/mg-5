@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./Base.t.sol";
-import {IReserveManager} from "../src/interfaces/IReserveManager.sol";
+import { BaseTest } from "./Base.t.sol";
+import { IReserveManager } from "../src/interfaces/IReserveManager.sol";
 
 contract CircuitBreakerTest is BaseTest {
     function testTriggerOnStaleOracle() public {

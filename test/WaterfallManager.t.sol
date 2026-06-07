@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./Base.t.sol";
+import { BaseTest } from "./Base.t.sol";
 
 contract WaterfallManagerTest is BaseTest {
     function testAvailableLiquidityAndLayers() public view {

@@ -40,4 +40,11 @@ contract Test {
     function assertGe(uint256 a, uint256 b) internal pure {
         require(a >= b, "assertGe failed");
     }
+
+    function bound(uint256 x, uint256 min, uint256 max) internal pure returns (uint256) {
+        require(min <= max, "bound invalid");
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
 }

@@ -20,3 +20,5 @@ error SlippageExceeded();
 error BountyDoesNotImprovePeg();
 error BountyRewardTooLarge();
 error MathOverflow();
+error InvalidReserveAsset();
+error InvalidReserveDeposit();

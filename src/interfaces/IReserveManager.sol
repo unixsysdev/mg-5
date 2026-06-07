@@ -18,10 +18,31 @@ interface IReserveManager {
         uint256 brickBps;
     }
 
+    struct ReserveAssets {
+        address gold;
+        address usd;
+        address cny;
+        address eur;
+        address brick;
+    }
+
+    enum RedemptionPolicy {
+        ProRata,
+        LiquidityPriority
+    }
+
     function updateMockReserves(Reserves calldata reserves) external;
+    function valueOfReserves(Reserves calldata reserveAmounts) external view returns (uint256);
+    function adjustedValueOfReserves(Reserves calldata reserveAmounts)
+        external
+        view
+        returns (uint256);
+    function increaseReserves(Reserves calldata reserveAmounts) external;
     function rawReserveValue() external view returns (uint256);
     function haircutAdjustedReserveValue() external view returns (uint256);
     function liabilities(uint256 mg5Supply, uint256 nav) external pure returns (uint256);
     function collateralRatioBps(uint256 mg5Supply, uint256 nav) external view returns (uint256);
     function reduceReservesProRata(uint256 value) external;
+    function releaseReservesProRata(address to, uint256 value) external;
+    function releaseReserves(address to, uint256 value) external;
 }

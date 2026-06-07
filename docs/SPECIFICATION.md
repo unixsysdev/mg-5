@@ -8,6 +8,8 @@ The protocol issues `MG5`, a basket-backed reserve token. The product is stabili
 
 Confidence is the result, not the mechanism.
 
+This repository has advanced to a v0.1 local/devnet implementation: mocked reserves can now be represented by configured mock ERC20 reserve assets, transferred into reserve custody during collateralized minting, and released during redemption according to the selected redemption policy.
+
 ## Technical Stack
 
 - Language: Solidity
@@ -173,6 +175,13 @@ Main solvency rule:
 haircut-adjusted reserves >= MG5 liabilities + required buffer
 ```
 
+v0.1 additions:
+
+- Configurable mock reserve ERC20 asset addresses for GOLD, USD, CNY, EUR and BRICK/EM.
+- Protocol-only reserve increases from collateralized mock deposits.
+- Pro-rata reserve release by default.
+- Optional liquidity-priority redemption release policy for stress modeling.
+
 ### MintRedeem
 
 Controls MG5 minting, burning, immediate redemption, and queue fallback.
@@ -211,6 +220,8 @@ Immediate redemption requires:
 - Slippage check satisfied
 
 If immediate redemption would break solvency, it reverts with `RedemptionQueueRequired`.
+
+v0.1 also adds `mintMG5WithReserves`, which pulls configured mock reserve ERC20 assets from the user, values the deposit through `ReserveManager`, increases reserve accounting, and mints MG5 only if the post-mint target collateral ratio is preserved.
 
 ### RedemptionQueue
 
@@ -391,6 +402,8 @@ The Foundry test suite covers:
 - 20% redemption run
 - 40% redemption run
 - Combined stale oracle and redemption run
+- Collateralized mock asset deposit and redemption release
+- Liquidity-priority redemption policy
 - Gold/CNY/EUR/BRICK sleeve shock
 - Reserve haircut increase
 - Fee buffer and war chest depletion bounds
@@ -420,6 +433,17 @@ Then it configures:
 - Initial normalized prices
 - Initial mocked reserves
 - Mocked waterfall liquidity
+- Mock reserve asset deployment and custody seeding
+
+## Stress Report
+
+The repository includes:
+
+```bash
+npm run stress:report
+```
+
+This runs build, full tests, focused stress tests and invariant tests, then writes `reports/stress-report.md`.
 
 ## Acceptance Criteria
 

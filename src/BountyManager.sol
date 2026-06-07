@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {MGSToken} from "./MGSToken.sol";
-import {BountyDoesNotImprovePeg, BountyRewardTooLarge} from "./libraries/Errors.sol";
-import {BountyClaimed} from "./libraries/Events.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { MGSToken } from "./MGSToken.sol";
+import { BountyDoesNotImprovePeg, BountyRewardTooLarge } from "./libraries/Errors.sol";
+import { BountyClaimed } from "./libraries/Events.sol";
 
 contract BountyManager is AccessControl {
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");

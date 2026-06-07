@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FixedPointMath} from "./FixedPointMath.sol";
-import {InvalidWeights} from "./Errors.sol";
+import { FixedPointMath } from "./FixedPointMath.sol";
+import { InvalidWeights } from "./Errors.sol";
 
 library BasketMath {
     uint256 public constant GOLD_BPS = 2_000;
@@ -24,10 +24,8 @@ library BasketMath {
         returns (uint256)
     {
         validateWeights();
-        return (
-            FixedPointMath.applyBps(gold, GOLD_BPS) + FixedPointMath.applyBps(usd, USD_BPS)
+        return (FixedPointMath.applyBps(gold, GOLD_BPS) + FixedPointMath.applyBps(usd, USD_BPS)
                 + FixedPointMath.applyBps(cny, CNY_BPS) + FixedPointMath.applyBps(eur, EUR_BPS)
-                + FixedPointMath.applyBps(brick, BRICK_BPS)
-        );
+                + FixedPointMath.applyBps(brick, BRICK_BPS));
     }
 }

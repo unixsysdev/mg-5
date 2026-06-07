@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {ProtocolInitialized} from "./libraries/Events.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ProtocolInitialized } from "./libraries/Events.sol";
 
 contract ProtocolGovernor is AccessControl {
     bytes32 public constant ORACLE_UPDATER_ROLE = keccak256("ORACLE_UPDATER_ROLE");

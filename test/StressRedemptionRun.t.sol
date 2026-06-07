@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./Base.t.sol";
+import { BaseTest } from "./Base.t.sol";
 
 contract StressRedemptionRunTest is BaseTest {
     function testTwentyPercentRedemptionRunSurvives() public {
         mintForUser(500_000e18);
         vm.prank(user);
         mintRedeem.redeemMG5(100_000e18, 0);
-        assertGe(reserves.collateralRatioBps(mg5.totalSupply(), oracle.getNAV()), reserves.MIN_COLLATERAL_RATIO_BPS());
+        assertGe(
+            reserves.collateralRatioBps(mg5.totalSupply(), oracle.getNAV()),
+            reserves.MIN_COLLATERAL_RATIO_BPS()
+        );
     }
 
     function testFortyPercentRunMovesToQueueWhenUnsafe() public {

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "forge build",
     "test": "forge test",
-    "compile:solc": "node scripts/compile-solc.mjs"
+    "compile:solc": "node scripts/compile-solc.mjs",
+    "stress:report": "node scripts/stress-report.mjs"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2",

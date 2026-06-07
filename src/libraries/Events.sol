@@ -12,3 +12,7 @@ event CircuitBreakerTriggered(string reason);
 event CircuitBreakerCleared();
 event WarChestDrawn(uint256 amount);
 event BountyClaimed(address indexed keeper, uint256 reward);
+event ReserveAssetsConfigured(address gold, address usd, address cny, address eur, address brick);
+event ReserveDepositReceived(address indexed user, uint256 rawValue, uint256 adjustedValue);
+event ReserveAssetsReleased(address indexed user, uint256 rawValue);
+event RedemptionPolicyUpdated(uint8 policy);

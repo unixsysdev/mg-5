@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./Base.t.sol";
-import {IReserveManager} from "../src/interfaces/IReserveManager.sol";
+import { BaseTest } from "./Base.t.sol";
+import { IReserveManager } from "../src/interfaces/IReserveManager.sol";
 
 contract StressReserveShockTest is BaseTest {
     function testSleevePriceShocksReduceNav() public {
         uint256 beforeNav = oracle.getNAV();
         vm.prank(admin);
-        oracle.updatePrices(0.85e18, 1e18, 0.90e18, 0.90e18, 0.70e18);
+        oracle.updatePrices(0.85e18, 1e18, 0.9e18, 0.9e18, 0.7e18);
         assertTrue(oracle.getNAV() < beforeNav);
     }
 

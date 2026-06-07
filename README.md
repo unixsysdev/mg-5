@@ -4,6 +4,8 @@ Project page: [https://www.gbotalgorithmic.com/MG5Protocol.html](https://www.gbo
 
 M&G5 is an EVM-compatible AppChain protocol MVP for a basket-backed reserve token, `MG5`. The first deliverable is not a live appchain. It is a Solidity + Foundry monetary protocol that can be built, tested, and stress-tested locally before any Avalanche L1 / Subnet-EVM-style deployment work begins.
 
+The current v0.1 branch includes collateralized mock reserve assets. Minting can now transfer mock GOLD/USD/CNY/EUR/BRICK ERC20 assets into reserve custody, value them through the mocked oracle, update reserve accounting, and mint MG5 only if post-mint collateralization remains above target.
+
 **Warning:** This is a local/devnet technical MVP with mocked reserves and mocked oracle data. It is not a production stablecoin, not an investment product, not a real reserve asset, and not ready for mainnet deployment.
 
 ## Basket
@@ -49,6 +51,9 @@ flowchart LR
 - `CircuitBreaker.sol`: Objective triggers for stale/frozen oracle, low collateral, queue overload, and manual pauses.
 - `BountyManager.sol`: Simulated keeper rewards paid only in MGS.
 - `ProtocolGovernor.sol`: v0 single-admin role registry.
+- `mocks/MockReserveAsset.sol`: Local/devnet reserve ERC20s for collateralized mock deposits.
+- `interfaces/IPriceAdapter.sol`: Future oracle adapter boundary.
+- `interfaces/IReserveAttestation.sol`: Future reserve attestation boundary.
 
 ## Local Setup
 
@@ -85,6 +90,12 @@ Run all tests:
 forge test
 ```
 
+Generate a stress report:
+
+```bash
+npm run stress:report
+```
+
 Run focused stress/invariant suites:
 
 ```bash
@@ -110,6 +121,8 @@ forge script script/DeployLocal.s.sol --rpc-url http://127.0.0.1:8545 --broadcas
 
 The deployment script creates `ProtocolGovernor`, `MG5Token`, `MGSToken`, `BasketOracle`, `ReserveManager`, `WaterfallManager`, `CircuitBreaker`, `RedemptionQueue`, `BountyManager`, and `MintRedeem`, then seeds prices and reserves.
 
+It also deploys local mock reserve assets for GOLD, USD, CNY, EUR, and BRICK/EM, configures them in `ReserveManager`, and mints the initial mocked reserve custody balances to the reserve manager.
+
 ## Stress Scenarios
 
 The test suite covers:
@@ -128,16 +141,19 @@ The test suite covers:
 Expected behavior:
 
 - Under-collateralized MG5 cannot be minted.
+- Collateralized mock minting transfers configured reserve assets into reserve custody.
 - Unsafe immediate redemptions move to the queue path.
 - Queued redemptions cannot process if solvency would break.
 - Oracle stale/frozen state blocks NAV-dependent actions.
 - Circuit breakers activate under objective failure states.
 - MGS never contributes to MG5 collateral.
+- Redemption accounting supports pro-rata release by default and a liquidity-priority policy for stress modeling.
 
 ## Known Limitations
 
 - Mocked oracle prices.
 - Mocked reserve balances.
+- Mocked reserve ERC20 assets are not real custody claims.
 - No real fiat, gold, or tokenized reserve custody.
 - No live DEX integration.
 - No bridge.

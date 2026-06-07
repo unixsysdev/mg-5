@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {FixedPointMath} from "./libraries/FixedPointMath.sol";
-import {Unauthorized} from "./libraries/Errors.sol";
-import {WarChestDrawn} from "./libraries/Events.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { FixedPointMath } from "./libraries/FixedPointMath.sol";
+import { Unauthorized } from "./libraries/Errors.sol";
+import { WarChestDrawn } from "./libraries/Events.sol";
 
 contract WaterfallManager is Ownable {
     uint8 public constant LAYER_DEX_LIQUIDITY = 1;
@@ -23,13 +23,16 @@ contract WaterfallManager is Ownable {
     uint256 public lastDrawDay;
     address public protocol;
 
-    constructor(address admin) Ownable(admin) {}
+    constructor(address admin) Ownable(admin) { }
 
     function setProtocol(address protocol_) external onlyOwner {
         protocol = protocol_;
     }
 
-    function seedLiquidity(uint256 dex, uint256 fees, uint256 warChest_, uint256 reserves) external onlyOwner {
+    function seedLiquidity(uint256 dex, uint256 fees, uint256 warChest_, uint256 reserves)
+        external
+        onlyOwner
+    {
         mockDexLiquidity = dex;
         feeBuffer = fees;
         warChest = warChest_;
@@ -63,7 +66,8 @@ contract WaterfallManager is Ownable {
         if (requiredAmount <= mockDexLiquidity) return LAYER_DEX_LIQUIDITY;
         if (requiredAmount <= mockDexLiquidity + feeBuffer) return LAYER_FEE_BUFFER;
         if (requiredAmount <= mockDexLiquidity + feeBuffer + warChest) return LAYER_WAR_CHEST;
-        if (requiredAmount <= mockDexLiquidity + feeBuffer + warChest + reserveLiquidationCapacity) {
+        if (requiredAmount <= mockDexLiquidity + feeBuffer + warChest + reserveLiquidationCapacity)
+        {
             return LAYER_RESERVE_LIQUIDATION;
         }
         if (warChest == 0 || reserveLiquidationCapacity > 0) return LAYER_REDEMPTION_QUEUE;

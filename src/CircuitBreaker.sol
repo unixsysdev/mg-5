@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {BasketOracle} from "./BasketOracle.sol";
-import {ReserveManager} from "./ReserveManager.sol";
-import {MG5Token} from "./MG5Token.sol";
-import {RedemptionQueue} from "./RedemptionQueue.sol";
-import {MintRedeem} from "./MintRedeem.sol";
-import {CircuitBreakerTriggered, CircuitBreakerCleared} from "./libraries/Events.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { BasketOracle } from "./BasketOracle.sol";
+import { ReserveManager } from "./ReserveManager.sol";
+import { MG5Token } from "./MG5Token.sol";
+import { RedemptionQueue } from "./RedemptionQueue.sol";
+import { MintRedeem } from "./MintRedeem.sol";
+import { CircuitBreakerTriggered, CircuitBreakerCleared } from "./libraries/Events.sol";
 
 contract CircuitBreaker is AccessControl {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -21,7 +21,12 @@ contract CircuitBreaker is AccessControl {
     RedemptionQueue public redemptionQueue;
     MintRedeem public mintRedeem;
 
-    constructor(address admin, BasketOracle oracle_, ReserveManager reserveManager_, MG5Token mg5_) {
+    constructor(
+        address admin,
+        BasketOracle oracle_,
+        ReserveManager reserveManager_,
+        MG5Token mg5_
+    ) {
         oracle = oracle_;
         reserveManager = reserveManager_;
         mg5 = mg5_;
@@ -29,7 +34,10 @@ contract CircuitBreaker is AccessControl {
         _grantRole(PAUSER_ROLE, admin);
     }
 
-    function configure(RedemptionQueue queue_, MintRedeem mintRedeem_) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function configure(RedemptionQueue queue_, MintRedeem mintRedeem_)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         redemptionQueue = queue_;
         mintRedeem = mintRedeem_;
     }
@@ -39,13 +47,19 @@ contract CircuitBreaker is AccessControl {
     }
 
     function triggerIfUndercollateralized() external {
-        if (reserveManager.collateralRatioBps(mg5.totalSupply(), oracle.getNAV()) < reserveManager.MIN_COLLATERAL_RATIO_BPS()) {
+        if (
+            reserveManager.collateralRatioBps(mg5.totalSupply(), oracle.getNAV())
+                < reserveManager.MIN_COLLATERAL_RATIO_BPS()
+        ) {
             _trigger("UNDERCOLLATERALIZED");
         }
     }
 
     function triggerIfQueueTooLarge() external {
-        if (address(redemptionQueue) != address(0) && redemptionQueue.pendingValue() > queueThresholdValue) {
+        if (
+            address(redemptionQueue) != address(0)
+                && redemptionQueue.pendingValue() > queueThresholdValue
+        ) {
             _trigger("QUEUE_TOO_LARGE");
         }
     }

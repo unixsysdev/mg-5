@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {MG5Token} from "./MG5Token.sol";
-import {MintRedeem} from "./MintRedeem.sol";
-import {InvalidRedemptionRequest, RedemptionAlreadyProcessed, Unauthorized} from "./libraries/Errors.sol";
-import {RedemptionRequested, RedemptionProcessed} from "./libraries/Events.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { MG5Token } from "./MG5Token.sol";
+import { MintRedeem } from "./MintRedeem.sol";
+import {
+    InvalidRedemptionRequest,
+    RedemptionAlreadyProcessed,
+    Unauthorized
+} from "./libraries/Errors.sol";
+import { RedemptionRequested, RedemptionProcessed } from "./libraries/Events.sol";
 
-contract RedemptionQueue is AccessControl {
+contract RedemptionQueue is AccessControl, ReentrancyGuard {
+    using SafeERC20 for MG5Token;
+
     bytes32 public constant KEEPER_ROLE = keccak256("KEEPER_ROLE");
 
     enum Status {
@@ -40,7 +48,11 @@ contract RedemptionQueue is AccessControl {
         _grantRole(KEEPER_ROLE, admin);
     }
 
-    function requestRedemption(uint256 mg5Amount) external returns (uint256 requestId) {
+    function requestRedemption(uint256 mg5Amount)
+        external
+        nonReentrant
+        returns (uint256 requestId)
+    {
         uint256 nav = mintRedeem.checkedNav();
         (uint256 grossValue,,) = mintRedeem.quoteRedemption(mg5Amount, nav);
         requestId = nextRequestId++;
@@ -55,11 +67,11 @@ contract RedemptionQueue is AccessControl {
         });
         pendingValue_ += grossValue;
         pendingCount_ += 1;
-        require(mg5.transferFrom(msg.sender, address(this), mg5Amount), "ESCROW_TRANSFER_FAILED");
+        mg5.safeTransferFrom(msg.sender, address(this), mg5Amount);
         emit RedemptionRequested(requestId, msg.sender, mg5Amount);
     }
 
-    function processRedemption(uint256 requestId) external onlyRole(KEEPER_ROLE) {
+    function processRedemption(uint256 requestId) external onlyRole(KEEPER_ROLE) nonReentrant {
         RedemptionRequest storage request = requests[requestId];
         if (request.owner == address(0)) revert InvalidRedemptionRequest();
         if (request.status != Status.Pending) revert RedemptionAlreadyProcessed();
@@ -71,7 +83,7 @@ contract RedemptionQueue is AccessControl {
         emit RedemptionProcessed(request.id, request.owner, valueOut);
     }
 
-    function cancelRedemption(uint256 requestId) external {
+    function cancelRedemption(uint256 requestId) external nonReentrant {
         RedemptionRequest storage request = requests[requestId];
         if (request.owner == address(0)) revert InvalidRedemptionRequest();
         if (request.owner != msg.sender) revert Unauthorized();
@@ -80,7 +92,7 @@ contract RedemptionQueue is AccessControl {
         request.status = Status.Cancelled;
         pendingValue_ -= request.redeemValue;
         pendingCount_ -= 1;
-        require(mg5.transfer(msg.sender, request.mg5Amount), "ESCROW_RETURN_FAILED");
+        mg5.safeTransfer(msg.sender, request.mg5Amount);
     }
 
     function pendingValue() external view returns (uint256) {
