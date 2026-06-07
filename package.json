@@ -1,0 +1,16 @@
+{
+  "name": "mg5-appchain-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "description": "M&G5 Global Reserve Protocol EVM AppChain MVP using Solidity and Foundry.",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "compile:solc": "node scripts/compile-solc.mjs"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "solc": "^0.8.24"
+  },
+  "devDependencies": {}
+}
