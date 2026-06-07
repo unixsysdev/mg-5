@@ -1,5 +1,7 @@
 # M&G5 Global Reserve Protocol
 
+Project page: [https://www.gbotalgorithmic.com/MG5Protocol.html](https://www.gbotalgorithmic.com/MG5Protocol.html)
+
 M&G5 is an EVM-compatible AppChain protocol MVP for a basket-backed reserve token, `MG5`. The first deliverable is not a live appchain. It is a Solidity + Foundry monetary protocol that can be built, tested, and stress-tested locally before any Avalanche L1 / Subnet-EVM-style deployment work begins.
 
 **Warning:** This is a local/devnet technical MVP with mocked reserves and mocked oracle data. It is not a production stablecoin, not an investment product, not a real reserve asset, and not ready for mainnet deployment.
